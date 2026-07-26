@@ -1,0 +1,9 @@
+.stat-tile {
+  color: inherit;
+  transition: border-color 0.15s ease;
+
+  &:hover {
+    text-decoration: none;
+    border-color: var(--brand);
+  }
+}

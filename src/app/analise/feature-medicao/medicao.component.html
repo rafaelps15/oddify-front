@@ -1,0 +1,62 @@
+<h1>Medição</h1>
+
+@if (store.loading()) {
+  <app-loading-indicator />
+}
+@if (store.error(); as error) {
+  <app-error-message [message]="error" />
+}
+
+@if (store.medicao(); as medicao) {
+  <section class="stat-tiles">
+    <div class="stat-tile">
+      <span class="stat-tile__label">Amostra total</span>
+      <span class="stat-tile__value">{{ medicao.amostraTotal }}</span>
+    </div>
+    <div class="stat-tile">
+      <span class="stat-tile__label">Amostra pós-Claude</span>
+      <span class="stat-tile__value">{{ medicao.amostraPosClaude }}</span>
+    </div>
+  </section>
+
+  <section class="brier-chart" aria-label="Comparação de Brier score por camada (menor é melhor)">
+    <h2>Brier score por camada (menor é melhor)</h2>
+    @for (barra of barras(); track barra.rotulo) {
+      <div class="brier-chart__row">
+        <span class="brier-chart__label">{{ barra.rotulo }}</span>
+        @if (barra.valor !== null) {
+          <div class="brier-chart__track">
+            <div
+              class="brier-chart__bar"
+              [style.width.%]="larguraDaBarra(barra.valor)"
+              [style.background]="barra.cor"
+            ></div>
+          </div>
+          <span class="brier-chart__value">{{ barra.valor | number: '1.3-3' }} (n={{ barra.amostra }})</span>
+        } @else {
+          <span class="brier-chart__value">sem amostra ainda</span>
+        }
+      </div>
+    }
+  </section>
+
+  <table class="sr-table">
+    <caption>Brier score por camada — versão em tabela</caption>
+    <thead>
+      <tr>
+        <th>Camada</th>
+        <th>Brier score</th>
+        <th>Amostra</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (barra of barras(); track barra.rotulo) {
+        <tr>
+          <td>{{ barra.rotulo }}</td>
+          <td>{{ barra.valor !== null ? (barra.valor | number: '1.3-3') : '—' }}</td>
+          <td>{{ barra.amostra }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}

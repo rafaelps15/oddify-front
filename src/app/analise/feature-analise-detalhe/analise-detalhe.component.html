@@ -1,0 +1,53 @@
+<a routerLink="/analises">← Análises</a>
+
+@if (store.loading()) {
+  <app-loading-indicator />
+}
+@if (store.error(); as error) {
+  <app-error-message [message]="error" />
+}
+@if (store.mutationError(); as mutationError) {
+  <app-error-message [message]="mutationError" />
+}
+
+@if (store.analise(); as analise) {
+  <h1>Análise — {{ analise.mercado }}</h1>
+
+  <dl>
+    <dt>Prob. Poisson pura</dt>
+    <dd>{{ analise.probPoissonPura | number: '1.2-2' }}</dd>
+    <dt>Prob. Dixon-Coles</dt>
+    <dd>{{ analise.probDixonColes | number: '1.2-2' }}</dd>
+    <dt>Prob. implícita da odd</dt>
+    <dd>{{ analise.probImplicitaDaOdd | number: '1.2-2' }}</dd>
+    <dt>Vantagem</dt>
+    <dd>{{ analise.vantagem | number: '1.2-2' }}</dd>
+    <dt>Odd de mercado</dt>
+    <dd>{{ analise.oddDeMercado }}</dd>
+    <dt>Aprovada no filtro</dt>
+    <dd>{{ analise.aprovadaNoFiltro ? 'Sim' : 'Não' }}</dd>
+    @if (analise.motivoDoDescarte) {
+      <dt>Motivo do descarte</dt>
+      <dd>{{ analise.motivoDoDescarte }}</dd>
+    }
+    <dt>Decisão do Claude</dt>
+    <dd><span class="badge" [class]="classeDecisao(analise.decisaoDoClaude)">{{ labelDecisao(analise.decisaoDoClaude) }}</span></dd>
+    @if (analise.justificativaDoClaude) {
+      <dt>Justificativa</dt>
+      <dd>{{ analise.justificativaDoClaude }}</dd>
+    }
+    @if (analise.versaoDoPrompt) {
+      <dt>Versão do prompt</dt>
+      <dd>{{ analise.versaoDoPrompt }}</dd>
+    }
+    <dt>Criada em (UTC)</dt>
+    <dd>{{ analise.criadaEmUtc }}</dd>
+  </dl>
+
+  @if (analise.aprovadaNoFiltro && analise.decisaoDoClaude === DecisaoDoClaude.NaoAvaliada) {
+    <form (submit)="onAvaliarComClaude($event, contextoAdicionalInput)">
+      <textarea #contextoAdicionalInput placeholder="Contexto adicional (opcional)"></textarea>
+      <button type="submit">Avaliar com Claude</button>
+    </form>
+  }
+}

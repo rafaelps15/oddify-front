@@ -1,0 +1,90 @@
+<h1>Apostas múltiplas</h1>
+
+<a routerLink="/apostas-multiplas/montar">Montar múltipla</a>
+
+@if (store.mutationError(); as mutationError) {
+  <app-error-message [message]="mutationError" />
+}
+
+@if (store.roi(); as roi) {
+  <section class="stat-tiles">
+    <div class="stat-tile">
+      <span class="stat-tile__label">Lucro total</span>
+      <span class="stat-tile__value" [class.stat-tile__value--good]="roi.lucroTotal > 0" [class.stat-tile__value--critical]="roi.lucroTotal < 0">
+        {{ roi.lucroTotal | number: '1.2-2' }}
+      </span>
+    </div>
+    <div class="stat-tile">
+      <span class="stat-tile__label">Total apostado</span>
+      <span class="stat-tile__value">{{ roi.totalApostado | number: '1.2-2' }}</span>
+    </div>
+    <div class="stat-tile">
+      <span class="stat-tile__label">ROI</span>
+      <span class="stat-tile__value" [class.stat-tile__value--good]="(roi.roi ?? 0) > 0" [class.stat-tile__value--critical]="(roi.roi ?? 0) < 0">
+        @if (roi.roi !== null) {
+          {{ roi.roi | number: '1.1-1' }}%
+        } @else {
+          —
+        }
+      </span>
+    </div>
+  </section>
+}
+
+@if (store.loading()) {
+  <app-loading-indicator />
+} @else if (store.error(); as error) {
+  <app-error-message [message]="error" />
+} @else if (store.apostaMultiplaList().length === 0) {
+  <app-empty-state message="Nenhuma múltipla montada ainda." />
+} @else {
+  <div class="filter-bar">
+    <label>
+      Resultado
+      <select (change)="onFiltrarPorResultado($any($event.target))">
+        <option value="">Todos</option>
+        <option [value]="ResultadoDaAposta.Pendente">Pendente</option>
+        <option [value]="ResultadoDaAposta.Ganha">Ganha</option>
+        <option [value]="ResultadoDaAposta.Perdida">Perdida</option>
+      </select>
+    </label>
+  </div>
+
+  @if (listaFiltrada().length === 0) {
+    <app-empty-state message="Nenhuma múltipla encontrada para esse filtro." />
+  } @else {
+  <table>
+    <thead>
+      <tr>
+        <th>Odd combinada</th>
+        <th>Stake</th>
+        <th>Resultado</th>
+        <th>Lucro/Perda</th>
+        <th>Criada em (UTC)</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (multipla of listaFiltrada(); track multipla.id) {
+        <tr>
+          <td><a [routerLink]="['/apostas-multiplas', multipla.id]">{{ multipla.oddCombinada }}</a></td>
+          <td>{{ multipla.stake | number: '1.2-2' }}</td>
+          <td><span class="badge" [class]="classeResultado(multipla.resultado)">{{ labelResultado(multipla.resultado) }}</span></td>
+          <td
+            [class.figure--good]="(multipla.lucroOuPerda ?? 0) > 0"
+            [class.figure--critical]="(multipla.lucroOuPerda ?? 0) < 0"
+          >
+            {{ multipla.lucroOuPerda !== null ? (multipla.lucroOuPerda | number: '1.2-2') : '—' }}
+          </td>
+          <td>{{ multipla.criadaEmUtc }}</td>
+          <td>
+            @if (multipla.resultado === ResultadoDaAposta.Pendente) {
+              <button type="button" (click)="store.liquidar(multipla.id)">Liquidar</button>
+            }
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+  }
+}

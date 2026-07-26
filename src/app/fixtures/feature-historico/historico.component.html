@@ -1,0 +1,41 @@
+<h1>Histórico de partidas</h1>
+
+@if (store.loading()) {
+  <app-loading-indicator />
+} @else if (store.error(); as error) {
+  <app-error-message [message]="error" />
+} @else if (partidasEncerradas().length === 0) {
+  <app-empty-state message="Nenhuma partida encerrada ou liquidada ainda." />
+} @else {
+  <table>
+    <thead>
+      <tr>
+        <th>Id externo</th>
+        <th>Data (UTC)</th>
+        <th>Situação</th>
+        <th>Placar</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (partida of partidasEncerradas(); track partida.id) {
+        <tr>
+          <td><a [routerLink]="['/partidas', partida.id]">{{ partida.idExterno }}</a></td>
+          <td>{{ partida.dataUtc }}</td>
+          <td>
+            <span class="badge" [class]="classeSituacao(partida.situacao)">
+              @switch (partida.situacao) {
+                @case (SituacaoDaPartida.Encerrada) { Encerrada }
+                @case (SituacaoDaPartida.Liquidada) { Liquidada }
+              }
+            </span>
+          </td>
+          <td>
+            @if (partida.golsCasa !== null && partida.golsVisitante !== null) {
+              {{ partida.golsCasa }} - {{ partida.golsVisitante }}
+            }
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}

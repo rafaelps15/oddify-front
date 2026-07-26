@@ -1,0 +1,43 @@
+<h1>Alavancagem (critério de Kelly)</h1>
+<p>Calcula o tamanho de aposta sugerido a partir da sua probabilidade estimada e da odd oferecida.</p>
+
+<form>
+  <label>
+    Odd decimal
+    <input type="number" step="0.01" min="1.01" [(ngModel)]="odd" name="odd" />
+  </label>
+  <label>
+    Probabilidade estimada (%)
+    <input type="number" step="1" min="0" max="100" [(ngModel)]="probabilidadePercent" name="probabilidade" />
+  </label>
+  <label>
+    Fração de Kelly
+    <select [(ngModel)]="fracaoDeKelly" name="fracaoDeKelly">
+      <option [ngValue]="1">Kelly cheio (1)</option>
+      <option [ngValue]="0.5">Meio Kelly (1/2)</option>
+      <option [ngValue]="0.25">Um quarto de Kelly (1/4)</option>
+    </select>
+  </label>
+  <label>
+    Banca (R$)
+    <input type="number" step="1" min="0" [(ngModel)]="banca" name="banca" />
+  </label>
+</form>
+
+<dl>
+  <dt>Probabilidade implícita na odd</dt>
+  <dd>{{ probabilidadeImplicita().toFixed(1) }}%</dd>
+
+  <dt>Edge (sua estimativa − implícita)</dt>
+  <dd [class]="edge() > 0 ? 'figure--good' : 'figure--critical'">{{ edge().toFixed(1) }}pp</dd>
+
+  <dt>Fração de Kelly calculada</dt>
+  <dd>{{ (kellyFracionado() * 100).toFixed(2) }}%</dd>
+
+  <dt>Stake sugerido</dt>
+  <dd>R$ {{ stakeSugerido().toFixed(2) }}</dd>
+</dl>
+
+@if (!temValorPositivo()) {
+  <p class="empty-state">Sem valor esperado positivo nesses parâmetros — o modelo de Kelly não recomenda apostar.</p>
+}

@@ -1,0 +1,82 @@
+<h1>Análises</h1>
+
+<form (submit)="onAnalisar($event, partidaIdSelect, mercadoSelect, mercadoCustomInput)">
+  <select #partidaIdSelect required>
+    <option value="" disabled selected>Partida</option>
+    @for (partida of partidasStore.partidaList(); track partida.id) {
+      <option [value]="partida.id">
+        {{ partida.idExterno }}
+        @if (partida.situacao === SituacaoDaPartida.Agendada) {
+          (agendada)
+        }
+      </option>
+    }
+  </select>
+  <select #mercadoSelect required (change)="onMercadoChange(mercadoSelect)">
+    <option value="" disabled selected>Mercado</option>
+    @for (mercado of mercadosCanonicos; track mercado) {
+      <option [value]="mercado">{{ mercado }}</option>
+    }
+    <option value="outro">Outro (linha customizada)</option>
+  </select>
+  <input
+    #mercadoCustomInput
+    [hidden]="!mostrarMercadoCustom()"
+    [required]="mostrarMercadoCustom()"
+    placeholder="ex: over_3_5"
+  />
+  <button type="submit">Analisar</button>
+</form>
+
+@if (store.mutationError(); as mutationError) {
+  <app-error-message [message]="mutationError" />
+}
+
+@if (store.loading()) {
+  <app-loading-indicator />
+} @else if (store.error(); as error) {
+  <app-error-message [message]="error" />
+} @else if (store.analiseList().length === 0) {
+  <app-empty-state message="Nenhuma análise aprovada ainda." />
+} @else {
+  <div class="filter-bar">
+    <app-search-input placeholder="Buscar por mercado…" (valorAlterado)="termoBusca.set($event)" />
+    <label>
+      Decisão do Claude
+      <select (change)="onFiltrarPorDecisao($any($event.target))">
+        <option value="">Todas</option>
+        <option [value]="DecisaoDoClaude.NaoAvaliada">Não avaliada</option>
+        <option [value]="DecisaoDoClaude.Confirma">Confirma</option>
+        <option [value]="DecisaoDoClaude.Reduz">Reduz</option>
+        <option [value]="DecisaoDoClaude.Veta">Veta</option>
+      </select>
+    </label>
+  </div>
+
+  @if (analisesFiltradas().length === 0) {
+    <app-empty-state message="Nenhuma análise encontrada para esses filtros." />
+  } @else {
+    <table>
+      <thead>
+        <tr>
+          <th>Mercado</th>
+          <th>Vantagem</th>
+          <th>Odd de mercado</th>
+          <th>Decisão do Claude</th>
+          <th>Criada em (UTC)</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (analise of analisesFiltradas(); track analise.id) {
+          <tr>
+            <td><a [routerLink]="['/analises', analise.id]">{{ analise.mercado }}</a></td>
+            <td>{{ analise.vantagem | number: '1.2-2' }}</td>
+            <td>{{ analise.oddDeMercado }}</td>
+            <td><span class="badge" [class]="classeDecisao(analise.decisaoDoClaude)">{{ labelDecisao(analise.decisaoDoClaude) }}</span></td>
+            <td>{{ analise.criadaEmUtc }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+}

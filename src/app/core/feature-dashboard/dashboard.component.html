@@ -1,0 +1,168 @@
+<div class="topbar">
+  <div class="league-pill">
+    <span class="live-dot small"></span>
+    Painel
+  </div>
+  <div class="league-pill">
+    <span class="mono">{{ store.proximasPartidas().length }} partidas monitoradas</span>
+  </div>
+</div>
+
+@if (store.loading()) {
+  <app-loading-indicator />
+} @else if (store.error(); as erro) {
+  <app-error-message [message]="erro" />
+} @else {
+  <div class="wrap">
+    <div class="main-col">
+      <div class="eyebrow">Oportunidade em destaque</div>
+
+      @if (store.oportunidadeDestaque(); as destaque) {
+        @if (store.partidaDestaque(); as partida) {
+          <section class="hero">
+            <div class="hero-top">
+              <div class="hero-teams">
+                <div class="team">
+                  <div class="crest home">{{ iniciaisDaEquipe(partida.equipeCasaId) }}</div>
+                  <div class="team-name">{{ nomeDaEquipe(partida.equipeCasaId) }}</div>
+                </div>
+                <div class="vs">vs</div>
+                <div class="team">
+                  <div class="crest away">{{ iniciaisDaEquipe(partida.equipeVisitanteId) }}</div>
+                  <div class="team-name">{{ nomeDaEquipe(partida.equipeVisitanteId) }}</div>
+                </div>
+              </div>
+
+              <div class="kickoff">
+                <div class="kickoff-time mono">{{ partida.dataUtc | date: 'HH:mm' }}</div>
+                <div class="kickoff-meta">{{ partida.dataUtc | date: 'dd/MM/yyyy' }} · UTC</div>
+              </div>
+            </div>
+
+            <div class="gauge-label-row">
+              <span><span class="k">●</span> {{ labelMercado(destaque.mercado) }} · Modelo Poisson–Dixon-Coles</span>
+              <span class="mono">{{ destaque.probDixonColes | percent: '1.0-1' }}</span>
+            </div>
+
+            <div class="gauge">
+              <div class="seg home" [style.width.%]="destaque.probDixonColes * 100">
+                {{ destaque.probDixonColes | percent: '1.0-1' }}
+              </div>
+            </div>
+
+            <div class="justif">
+              <b>Camada Claude:</b>
+              <span class="badge" [class]="classeDecisao(destaque.decisaoDoClaude)">{{ labelDecisao(destaque.decisaoDoClaude) }}</span>
+              @if (destaque.justificativaDoClaude) {
+                — {{ destaque.justificativaDoClaude }}
+              } @else {
+                — ainda não avaliada pelo Claude.
+              }
+            </div>
+
+            @if (store.cotacoesDoMercadoDestaque().length > 0) {
+              <div class="hero-odds-row">
+                @for (cotacao of store.cotacoesDoMercadoDestaque(); track cotacao.id) {
+                  <div class="odd-chip">
+                    <div class="lbl">{{ cotacao.casa }}</div>
+                    <div class="val">{{ cotacao.odd }}</div>
+                    <div class="trend mono neutral">{{ cotacao.coletadaEmUtc | date: 'dd/MM HH:mm' }}</div>
+                  </div>
+                }
+              </div>
+            }
+
+            <div class="hero-odds-row">
+              <button type="button" class="odd-chip" (click)="adicionarAoBilhete(destaque.id)" [disabled]="estaSelecionada(destaque.id)">
+                <div class="lbl">Odd de mercado</div>
+                <div class="val">{{ destaque.oddDeMercado }}</div>
+                <div class="trend mono neutral">{{ estaSelecionada(destaque.id) ? 'no bilhete' : 'adicionar ao bilhete' }}</div>
+              </button>
+            </div>
+          </section>
+        }
+      } @else {
+        <app-empty-state message="Nenhuma oportunidade aprovada com partida agendada no momento." />
+      }
+
+      <div class="eyebrow">Próximas partidas</div>
+
+      @if (store.proximasPartidas().length === 0) {
+        <app-empty-state message="Nenhuma partida agendada." />
+      } @else {
+        <div class="list-card">
+          @for (partida of store.proximasPartidas(); track partida.id) {
+            <a class="match-row" [routerLink]="['/partidas', partida.id]">
+              <div class="time mono">{{ partida.dataUtc | date: 'dd/MM HH:mm' }}</div>
+              <div class="teams">
+                {{ nomeDaEquipe(partida.equipeCasaId) }} × {{ nomeDaEquipe(partida.equipeVisitanteId) }}
+              </div>
+              <span class="cta">Ver análise</span>
+            </a>
+          }
+        </div>
+      }
+    </div>
+
+    <aside class="side-col">
+      <div class="side-card">
+        <div class="side-title">
+          Bilhete
+          <span class="count mono">{{ legsSelecionadas().length }}</span>
+        </div>
+
+        @if (legsSelecionadas().length === 0) {
+          <p class="mono" style="color: var(--text-faint); font-size: 12px;">Nenhuma seleção adicionada.</p>
+        } @else {
+          @for (leg of legsSelecionadas(); track leg.id) {
+            <div class="leg">
+              <div class="leg-info">
+                <div class="m">{{ labelMercado(leg.mercado) }}</div>
+                <div class="p">{{ labelDecisao(leg.decisaoDoClaude) }}</div>
+              </div>
+              <div>
+                <span class="leg-odd">{{ leg.oddDeMercado.toFixed(2) }}</span>
+                <button type="button" class="remove" (click)="removerDoBilhete(leg.id)" aria-label="Remover seleção">✕</button>
+              </div>
+            </div>
+          }
+
+          <div class="combo-row">
+            <span class="lbl">Odd combinada</span>
+            <span class="val mono">{{ combinedOdd().toFixed(2) }}</span>
+          </div>
+
+          <div class="stake-input">
+            <span>R$</span>
+            <input type="number" min="0" step="1" [ngModel]="stake()" (ngModelChange)="stake.set($event)" name="stake" />
+          </div>
+
+          <div class="return-row">
+            <span>Retorno potencial</span>
+            <b>R$ {{ potentialReturn().toFixed(2) }}</b>
+          </div>
+
+          @if (bancaStore.temBancaConfigurada()) {
+            <button class="btn-primary" type="button" (click)="onConfirmarBilhete()">Confirmar bilhete</button>
+          } @else {
+            <p class="mono" style="color: var(--text-faint); font-size: 11px; margin-top: 10px;">
+              Configure uma <a routerLink="/banca">banca</a> antes de confirmar.
+            </p>
+          }
+        }
+      </div>
+
+      <div class="side-card">
+        <div class="side-title no-count">Status do sistema</div>
+        <div class="status-list">
+          @for (status of systemStatusStore.itens(); track status.label) {
+            <div class="row">
+              <span><span class="dot" [class.accent]="status.accent"></span>{{ status.label }}</span>
+              <span class="ok" [class.accent]="status.accent">{{ status.value }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    </aside>
+  </div>
+}

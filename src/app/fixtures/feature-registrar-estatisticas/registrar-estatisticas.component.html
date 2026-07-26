@@ -1,0 +1,49 @@
+<a [routerLink]="['/partidas', id()]">← Partida</a>
+<h1>Registrar estatísticas</h1>
+
+@if (store.mutationError(); as mutationError) {
+  <app-error-message [message]="mutationError" />
+}
+
+<section>
+  <h2>Estatística de equipe</h2>
+  @if (store.equipeRegistrada()) {
+    <p>Registrada com sucesso.</p>
+  }
+  <form (submit)="onRegistrarEquipe($event, equipeIdInput, golsInput, finalizacoesInput, escanteiosInput, posseInput)">
+    <input #equipeIdInput placeholder="Id da equipe" required />
+    <input #golsInput type="number" min="0" placeholder="Gols" required />
+    <input #finalizacoesInput type="number" min="0" placeholder="Finalizações" required />
+    <input #escanteiosInput type="number" min="0" placeholder="Escanteios" required />
+    <input #posseInput type="number" min="0" max="100" step="0.1" placeholder="Posse (%)" required />
+    <button type="submit">Registrar</button>
+  </form>
+</section>
+
+<section>
+  <h2>Estatística de jogador</h2>
+  @if (store.jogadorRegistrado()) {
+    <p>Registrada com sucesso.</p>
+  }
+  <form
+    (submit)="
+      onRegistrarJogador(
+        $event,
+        jogadorIdInput,
+        golsJogadorInput,
+        assistenciasInput,
+        minutosInput,
+        titularInput,
+        notaInput
+      )
+    "
+  >
+    <input #jogadorIdInput placeholder="Id do jogador" required />
+    <input #golsJogadorInput type="number" min="0" placeholder="Gols" required />
+    <input #assistenciasInput type="number" min="0" placeholder="Assistências" required />
+    <input #minutosInput type="number" min="0" max="120" placeholder="Minutos" required />
+    <label><input #titularInput type="checkbox" /> Titular</label>
+    <input #notaInput type="number" min="0" max="10" step="0.1" placeholder="Nota" required />
+    <button type="submit">Registrar</button>
+  </form>
+</section>

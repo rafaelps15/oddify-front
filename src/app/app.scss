@@ -1,0 +1,190 @@
+:host {
+  --rail-bg: #0b100d;
+  --rail-surface: #161f1a;
+  --rail-line: #222d27;
+  --rail-text: #e8e6df;
+  --rail-text-dim: #9aa69d;
+  --rail-text-faint: #5e6b63;
+  --rail-model: #4fb8a8;
+  --rail-model-dim: rgba(79, 184, 168, 0.14);
+  --rail-ai: #d9a253;
+
+  display: block;
+  height: 100%;
+}
+
+.icon {
+  width: 17px;
+  height: 17px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+.app-shell {
+  display: flex;
+  height: 100%;
+}
+
+.rail {
+  flex: 0 0 230px;
+  display: flex;
+  flex-direction: column;
+  background: var(--rail-bg);
+  border-right: 1px solid var(--rail-line);
+  padding: var(--space-4) var(--space-3);
+  overflow-y: auto;
+
+  &__brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: var(--space-2) var(--space-2) var(--space-5);
+    color: var(--rail-text);
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  &__mark {
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, var(--rail-model), var(--rail-ai));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    color: #0f1512;
+    flex: none;
+  }
+
+  &__name {
+    font-weight: 700;
+    font-size: 1.05rem;
+    letter-spacing: 0.01em;
+  }
+
+  &__nav {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: 9px var(--space-2);
+    border-radius: var(--radius-md);
+    color: var(--rail-text-dim);
+    font-weight: 500;
+    font-size: 0.9rem;
+    border-left: 2px solid transparent;
+    cursor: pointer;
+
+    &:hover {
+      color: var(--rail-text);
+      background: var(--rail-surface);
+      text-decoration: none;
+    }
+
+    &.is-active {
+      color: var(--rail-text);
+      background: var(--rail-model-dim);
+      border-left: 2px solid var(--rail-model);
+
+      .icon {
+        color: var(--rail-model);
+        opacity: 1;
+      }
+    }
+
+    &.is-disabled {
+      color: var(--rail-text-faint);
+      cursor: default;
+
+      &:hover {
+        color: var(--rail-text-faint);
+        background: none;
+      }
+    }
+
+    .badge {
+      margin-left: auto;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      background: var(--surface-3);
+      color: var(--rail-text-faint);
+      padding: 1px 6px;
+      border-radius: 9px;
+    }
+  }
+}
+
+.app-main {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  height: 100%;
+}
+
+.app-main > * {
+  display: block;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-5);
+}
+
+/* The dashboard is a wide two-column layout (feed + bet slip), not a single-column form page. */
+.app-main > app-dashboard {
+  max-width: 1400px;
+}
+
+@media (max-width: 860px) {
+  .app-shell {
+    flex-direction: column;
+    height: auto;
+    min-height: 100%;
+  }
+
+  .rail {
+    flex: none;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    border-right: none;
+    border-bottom: 1px solid var(--rail-line);
+    padding: var(--space-3) var(--space-4);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+
+    &__brand {
+      padding: 0 var(--space-4) 0 0;
+    }
+
+    &__nav {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+
+    &__item {
+      padding: 6px var(--space-3);
+    }
+  }
+
+  .app-main {
+    overflow-y: visible;
+  }
+
+  .app-main > * {
+    padding: var(--space-4);
+  }
+}

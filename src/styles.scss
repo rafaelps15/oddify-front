@@ -1,0 +1,409 @@
+/* Tokens — identidade escura tipo fintech. Único tema: não alterna por prefers-color-scheme,
+   senão telas com token global (tabelas/forms) ficam claras enquanto o rail e o dashboard
+   (que usam cores fixas) continuam escuros — uma mistura inconsistente. */
+:root {
+  color-scheme: dark;
+
+  --bg: #0a0a0f;
+  --surface-1: #131319;
+  --surface-2: #1b1b23;
+  --surface-3: #22222c;
+  --text-primary: #f1f1f5;
+  --text-secondary: #9a9aa6;
+  --text-muted: #8a97a6;
+  --border: #26262f;
+
+  --brand: #2ee83b;
+  --brand-ink: #051403;
+
+  --status-good: #2ee83b;
+  --status-good-bg: #15211b;
+  --status-critical: #f2685f;
+  --status-critical-bg: #241516;
+  --status-info: #4f8ff7;
+  --status-info-bg: #14203a;
+  --status-warning: #facc15;
+  --status-warning-bg: #3a2f05;
+
+  --series-1: #2ee83b;
+  --series-2: #4f8ff7;
+  --series-3: #facc15;
+
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-pill: 999px;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 1px rgba(0, 0, 0, 0.3);
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+
+  --font-mono:
+    ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', 'Courier New', monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2 {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+h1 {
+  font-size: 1.5rem;
+  margin: 0 0 var(--space-4);
+}
+
+h2 {
+  font-size: 1.05rem;
+  margin: var(--space-5) 0 var(--space-3);
+  color: var(--text-secondary);
+}
+
+a {
+  color: var(--brand);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Forms read as cards; a form nested inside a table cell (inline row actions) stays plain. */
+form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  padding: var(--space-4);
+  margin: 0 0 var(--space-5);
+}
+
+td form {
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
+  display: inline-flex;
+}
+
+label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--text-secondary);
+}
+
+input,
+select,
+textarea {
+  font: inherit;
+  color: var(--text-primary);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 8px 10px;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid var(--brand);
+  outline-offset: 1px;
+}
+
+textarea {
+  min-width: 240px;
+  min-height: 60px;
+}
+
+button {
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text-primary);
+  transition: filter 0.15s ease;
+}
+
+button:hover {
+  border-color: var(--text-muted);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+button[type='submit'] {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: var(--brand-ink);
+}
+
+button[type='submit']:hover {
+  filter: brightness(1.08);
+}
+
+table {
+  display: block;
+  overflow-x: auto;
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  margin: 0 0 var(--space-5);
+}
+
+thead,
+tbody {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+td {
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+}
+
+td:first-child {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+th {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+  font-weight: 600;
+  background: var(--surface-2);
+  font-family: inherit;
+}
+
+tbody tr:hover {
+  background: var(--surface-2);
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+  margin: 0 0 var(--space-2);
+}
+
+dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: var(--space-2) var(--space-4);
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  padding: var(--space-4) var(--space-5);
+  margin: 0 0 var(--space-5);
+}
+
+dt {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-mono);
+}
+
+.stat-tiles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin: 0 0 var(--space-5);
+}
+
+.stat-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  padding: var(--space-4) var(--space-5);
+  min-width: 160px;
+}
+
+.stat-tile__label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.stat-tile__value {
+  font-size: 1.75rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-mono);
+}
+
+.stat-tile__value--good {
+  color: var(--status-good);
+}
+
+.stat-tile__value--critical {
+  color: var(--status-critical);
+}
+
+/* Pílulas de status — mesma linguagem visual do site de referência (badge colorido pra
+   resultado/decisão/situação), nunca a única forma de transmitir o significado (o texto do
+   rótulo já carrega isso). */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.badge--good {
+  color: var(--status-good);
+  background: var(--status-good-bg);
+}
+
+.badge--critical {
+  color: var(--status-critical);
+  background: var(--status-critical-bg);
+}
+
+.badge--info {
+  color: var(--status-info);
+  background: var(--status-info-bg);
+}
+
+.badge--warning {
+  color: var(--status-warning);
+  background: var(--status-warning-bg);
+}
+
+.badge--neutral {
+  color: var(--text-muted);
+  background: var(--surface-2);
+}
+
+.figure--good {
+  color: var(--status-good);
+}
+
+.figure--critical {
+  color: var(--status-critical);
+}
+
+.loading-indicator,
+.empty-state {
+  color: var(--text-muted);
+  padding: var(--space-4) 0;
+}
+
+.empty-state {
+  font-style: italic;
+}
+
+.error-message {
+  color: var(--status-critical);
+  background: color-mix(in srgb, var(--status-critical) 12%, var(--surface-1));
+  border: 1px solid color-mix(in srgb, var(--status-critical) 35%, transparent);
+  border-radius: var(--radius-lg);
+  padding: var(--space-3) var(--space-4);
+  margin: 0 0 var(--space-4);
+}
+
+/* Visualmente oculto mas acessível — a versão em tabela exigida pela skill dataviz para quem
+   usa leitor de tela, sem duplicar visualmente o gráfico de barras já visível. */
+.sr-table {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 640px) {
+  form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  td form {
+    flex-direction: row;
+  }
+
+  .stat-tiles {
+    flex-direction: column;
+  }
+
+  dl {
+    grid-template-columns: 1fr;
+  }
+}

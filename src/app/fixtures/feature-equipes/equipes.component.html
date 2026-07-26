@@ -1,0 +1,50 @@
+<a routerLink="/ligas">← Ligas</a>
+<h1>Equipes</h1>
+
+<form (submit)="onCriar($event, nomeInput, idExternoInput)">
+  <input #nomeInput placeholder="Nome" required />
+  <input #idExternoInput placeholder="Id externo" required />
+  <button type="submit">Criar equipe</button>
+</form>
+
+@if (store.mutationError(); as mutationError) {
+  <app-error-message [message]="mutationError" />
+}
+
+@if (store.loading()) {
+  <app-loading-indicator />
+} @else if (store.error(); as error) {
+  <app-error-message [message]="error" />
+} @else if (store.equipeList().length === 0) {
+  <app-empty-state message="Nenhuma equipe cadastrada nesta liga." />
+} @else {
+  <app-search-input placeholder="Buscar por nome ou id externo…" (valorAlterado)="termoBusca.set($event)" />
+
+  @if (equipesFiltradas().length === 0) {
+    <app-empty-state message="Nenhuma equipe encontrada para esse filtro." />
+  } @else {
+    <table>
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Id externo</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (equipe of equipesFiltradas(); track equipe.id) {
+          <tr>
+            <td><a [routerLink]="['/equipes', equipe.id, 'jogadores']">{{ equipe.nome }}</a></td>
+            <td>{{ equipe.idExterno }}</td>
+            <td>
+              <form (submit)="onRenomear($event, equipe.id, nomeEdit)">
+                <input #nomeEdit [value]="equipe.nome" />
+                <button type="submit">Renomear</button>
+              </form>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+}

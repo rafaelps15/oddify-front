@@ -1,0 +1,37 @@
+<div class="app-shell">
+  <aside class="rail">
+    <a class="rail__brand" routerLink="/">
+      <span class="rail__mark">O</span>
+      <span class="rail__name">Oddify</span>
+    </a>
+
+    <nav class="rail__nav">
+      @for (item of navItems; track item.label) {
+        @if (item.route) {
+          <a class="rail__item" [routerLink]="item.route" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: true }">
+            <svg class="icon" viewBox="0 0 24 24">
+              @for (d of item.icon; track d) {
+                <path [attr.d]="d" />
+              }
+            </svg>
+            {{ item.label }}
+          </a>
+        } @else {
+          <span class="rail__item is-disabled" title="Ainda não disponível">
+            <svg class="icon" viewBox="0 0 24 24">
+              @for (d of item.icon; track d) {
+                <path [attr.d]="d" />
+              }
+            </svg>
+            {{ item.label }}
+            <span class="badge">em breve</span>
+          </span>
+        }
+      }
+    </nav>
+  </aside>
+
+  <div class="app-main">
+    <router-outlet />
+  </div>
+</div>

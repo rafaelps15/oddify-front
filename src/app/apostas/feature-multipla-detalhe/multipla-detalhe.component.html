@@ -1,0 +1,35 @@
+<a routerLink="/apostas-multiplas">← Apostas múltiplas</a>
+
+@if (store.loading()) {
+  <app-loading-indicator />
+}
+@if (store.error(); as error) {
+  <app-error-message [message]="error" />
+}
+@if (store.mutationError(); as mutationError) {
+  <app-error-message [message]="mutationError" />
+}
+
+@if (store.multipla(); as multipla) {
+  <h1>Múltipla — odd {{ multipla.oddCombinada }}</h1>
+
+  <dl>
+    <dt>Stake</dt>
+    <dd>{{ multipla.stake | number: '1.2-2' }}</dd>
+    <dt>Resultado</dt>
+    <dd><span class="badge" [class]="classeResultado(multipla.resultado)">{{ labelResultado(multipla.resultado) }}</span></dd>
+    <dt>Lucro/Perda</dt>
+    <dd
+      [class.figure--good]="(multipla.lucroOuPerda ?? 0) > 0"
+      [class.figure--critical]="(multipla.lucroOuPerda ?? 0) < 0"
+    >
+      {{ multipla.lucroOuPerda !== null ? (multipla.lucroOuPerda | number: '1.2-2') : '—' }}
+    </dd>
+    <dt>Criada em (UTC)</dt>
+    <dd>{{ multipla.criadaEmUtc }}</dd>
+  </dl>
+
+  @if (multipla.resultado === ResultadoDaAposta.Pendente) {
+    <button type="button" (click)="store.liquidar()">Liquidar</button>
+  }
+}

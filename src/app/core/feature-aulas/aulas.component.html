@@ -1,0 +1,25 @@
+<h1>Tutorial do sistema</h1>
+<p>Um resumo rápido de como o Oddify organiza os dados e chega às recomendações.</p>
+
+<h2>1. Fixtures</h2>
+<p>
+  <a routerLink="/ligas">Ligas</a>, equipes e jogadores são o dado de referência. Cada liga guarda as médias usadas
+  pelo modelo; <a routerLink="/partidas">partidas</a> reúnem cotações de mercado e, quando encerradas, o placar real
+  que alimenta o histórico.
+</p>
+
+<h2>2. Análise</h2>
+<p>
+  Para cada partida, o motor Poisson–Dixon-Coles estima probabilidades de casa/empate/fora a partir do histórico
+  recente. Uma camada adicional (Claude) revisa esse resultado puro e pode ajustar o veredito com contexto que o
+  modelo não enxerga — lesões, desfalques, etc. Acompanhe isso em <a routerLink="/analises">Análises</a>, e a
+  qualidade histórica dessas previsões (Brier score, ROI por camada) em <a routerLink="/analises/medicao">Performance</a>.
+</p>
+
+<h2>3. Apostas</h2>
+<p>
+  <a routerLink="/banca">Banca</a> guarda seu saldo e o modo de operação (real ou paper trading).
+  <a routerLink="/apostas-multiplas">Apostas múltiplas</a> combina pernas de diferentes partidas numa única aposta.
+  Use <a routerLink="/alavancagem">Alavancagem</a> para calcular o tamanho de aposta sugerido pelo critério de Kelly
+  antes de confirmar uma entrada.
+</p>

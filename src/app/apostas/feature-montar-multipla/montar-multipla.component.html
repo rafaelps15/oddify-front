@@ -1,0 +1,44 @@
+<a routerLink="/apostas-multiplas">← Apostas múltiplas</a>
+<h1>Montar múltipla</h1>
+
+@if (store.mutationError(); as mutationError) {
+  <app-error-message [message]="mutationError" />
+}
+
+@if (store.loading()) {
+  <app-loading-indicator />
+} @else if (store.error(); as error) {
+  <app-error-message [message]="error" />
+} @else if (store.candidatas().length === 0) {
+  <app-empty-state message="Nenhuma análise confirmada/reduzida disponível pra montar múltipla." />
+} @else {
+  <form (submit)="onMontar($event)">
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th>Mercado</th>
+          <th>Odd de mercado</th>
+          <th>Vantagem</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (analise of store.candidatas(); track analise.id) {
+          <tr>
+            <td>
+              <input
+                type="checkbox"
+                [attr.aria-label]="'Selecionar análise ' + analise.mercado"
+                (change)="toggleSelecionada(analise.id, $any($event.target).checked)"
+              />
+            </td>
+            <td>{{ analise.mercado }}</td>
+            <td>{{ analise.oddDeMercado }}</td>
+            <td>{{ analise.vantagem | number: '1.2-2' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+    <button type="submit" [disabled]="!podeMontar()">Montar múltipla (2–3 seleções)</button>
+  </form>
+}

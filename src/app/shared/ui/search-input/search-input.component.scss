@@ -1,0 +1,34 @@
+.search-input {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  padding: 6px 14px;
+  margin: 0 0 var(--space-4);
+  color: var(--text-muted);
+  width: 100%;
+  max-width: 320px;
+
+  svg {
+    width: 15px;
+    height: 15px;
+    flex: none;
+  }
+
+  input {
+    all: unset;
+    flex: 1;
+    color: var(--text-primary);
+    font: inherit;
+  }
+
+  input::placeholder {
+    color: var(--text-muted);
+  }
+
+  &:focus-within {
+    border-color: var(--brand);
+  }
+}

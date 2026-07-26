@@ -1,0 +1,86 @@
+<h1>Partidas</h1>
+
+<form (submit)="onCriar($event, idExternoInput, ligaIdSelect, equipeCasaInput, equipeVisitanteInput, dataUtcInput)">
+  <input #idExternoInput placeholder="Id externo" required />
+  <select #ligaIdSelect required>
+    <option value="" disabled selected>Liga</option>
+    @for (liga of ligasStore.ligaList(); track liga.id) {
+      <option [value]="liga.id">{{ liga.nome }}</option>
+    }
+  </select>
+  <input #equipeCasaInput placeholder="Id da equipe da casa" required />
+  <input #equipeVisitanteInput placeholder="Id da equipe visitante" required />
+  <input #dataUtcInput type="datetime-local" required />
+  <button type="submit">Criar partida</button>
+</form>
+
+@if (store.mutationError(); as mutationError) {
+  <app-error-message [message]="mutationError" />
+}
+
+@if (store.loading()) {
+  <app-loading-indicator />
+} @else if (store.error(); as error) {
+  <app-error-message [message]="error" />
+} @else if (store.partidaList().length === 0) {
+  <app-empty-state message="Nenhuma partida cadastrada." />
+} @else {
+  <div class="filter-bar">
+    <app-search-input placeholder="Buscar por id externo…" (valorAlterado)="termoBusca.set($event)" />
+    <label>
+      Liga
+      <select (change)="onFiltrarPorLiga($any($event.target))">
+        <option value="">Todas</option>
+        @for (liga of ligasStore.ligaList(); track liga.id) {
+          <option [value]="liga.id">{{ liga.nome }}</option>
+        }
+      </select>
+    </label>
+    <label>
+      Situação
+      <select (change)="onFiltrarPorSituacao($any($event.target))">
+        <option value="">Todas</option>
+        <option [value]="SituacaoDaPartida.Agendada">Agendada</option>
+        <option [value]="SituacaoDaPartida.Encerrada">Encerrada</option>
+        <option [value]="SituacaoDaPartida.Liquidada">Liquidada</option>
+      </select>
+    </label>
+  </div>
+
+  @if (partidasFiltradas().length === 0) {
+    <app-empty-state message="Nenhuma partida encontrada para esses filtros." />
+  } @else {
+    <table>
+      <thead>
+        <tr>
+          <th>Id externo</th>
+          <th>Data (UTC)</th>
+          <th>Situação</th>
+          <th>Placar</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (partida of partidasFiltradas(); track partida.id) {
+          <tr>
+            <td><a [routerLink]="['/partidas', partida.id]">{{ partida.idExterno }}</a></td>
+            <td>{{ partida.dataUtc }}</td>
+            <td>
+              <span class="badge" [class]="classeSituacao(partida.situacao)">
+                @switch (partida.situacao) {
+                  @case (SituacaoDaPartida.Agendada) { Agendada }
+                  @case (SituacaoDaPartida.Encerrada) { Encerrada }
+                  @case (SituacaoDaPartida.Liquidada) { Liquidada }
+                }
+              </span>
+            </td>
+            <td>
+              @if (partida.golsCasa !== null && partida.golsVisitante !== null) {
+                {{ partida.golsCasa }} - {{ partida.golsVisitante }}
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+}

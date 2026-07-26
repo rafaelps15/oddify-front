@@ -1,0 +1,52 @@
+<h1>Jogadores</h1>
+
+<form (submit)="onCriar($event, nomeInput, idExternoInput, posicaoInput)">
+  <input #nomeInput placeholder="Nome" required />
+  <input #idExternoInput placeholder="Id externo" required />
+  <input #posicaoInput placeholder="Posição" required />
+  <button type="submit">Criar jogador</button>
+</form>
+
+@if (store.mutationError(); as mutationError) {
+  <app-error-message [message]="mutationError" />
+}
+
+@if (store.loading()) {
+  <app-loading-indicator />
+} @else if (store.error(); as error) {
+  <app-error-message [message]="error" />
+} @else if (store.jogadorList().length === 0) {
+  <app-empty-state message="Nenhum jogador cadastrado nesta equipe." />
+} @else {
+  <app-search-input placeholder="Buscar por nome, id externo ou posição…" (valorAlterado)="termoBusca.set($event)" />
+
+  @if (jogadoresFiltrados().length === 0) {
+    <app-empty-state message="Nenhum jogador encontrado para esse filtro." />
+  } @else {
+    <table>
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Id externo</th>
+          <th>Posição</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (jogador of jogadoresFiltrados(); track jogador.id) {
+          <tr>
+            <td>{{ jogador.nome }}</td>
+            <td>{{ jogador.idExterno }}</td>
+            <td>{{ jogador.posicao }}</td>
+            <td>
+              <form (submit)="onTransferir($event, jogador.id, novaEquipeId)">
+                <input #novaEquipeId placeholder="Id da nova equipe" required />
+                <button type="submit">Transferir</button>
+              </form>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+}

@@ -1,0 +1,43 @@
+.brier-chart {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  padding: var(--space-5);
+  margin: 0 0 var(--space-5);
+
+  h2 {
+    margin-top: 0;
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: 180px 1fr auto;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2) 0;
+  }
+
+  &__label {
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+
+  &__track {
+    background: var(--surface-2);
+    border-radius: 4px;
+    height: 10px;
+    overflow: hidden;
+  }
+
+  &__bar {
+    height: 100%;
+    border-radius: 4px;
+  }
+
+  &__value {
+    font-variant-numeric: tabular-nums;
+    color: var(--text-secondary);
+    white-space: nowrap;
+  }
+}

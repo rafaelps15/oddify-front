@@ -1,0 +1,34 @@
+<h1>Jogadores</h1>
+<p>Escolha uma liga e uma equipe para ver o elenco.</p>
+
+<div class="filter-bar">
+  <label>
+    Liga
+    <select (change)="onSelecionarLiga($any($event.target))" [disabled]="ligasStore.loading()">
+      <option value="" disabled selected>Selecione…</option>
+      @for (liga of ligasStore.ligaList(); track liga.id) {
+        <option [value]="liga.id">{{ liga.nome }}</option>
+      }
+    </select>
+  </label>
+  @if (ligasStore.loading()) {
+    <app-loading-indicator />
+  }
+</div>
+
+@if (ligaId()) {
+  @if (equipesStore.loading()) {
+    <app-loading-indicator />
+  } @else if (equipesStore.equipeList().length === 0) {
+    <app-empty-state message="Nenhuma equipe cadastrada nessa liga." />
+  } @else {
+    <div class="stat-tiles">
+      @for (equipe of equipesStore.equipeList(); track equipe.id) {
+        <a class="stat-tile" [routerLink]="['/equipes', equipe.id, 'jogadores']">
+          <span class="stat-tile__label">{{ equipe.idExterno }}</span>
+          <span class="stat-tile__value">{{ equipe.nome }}</span>
+        </a>
+      }
+    </div>
+  }
+}
